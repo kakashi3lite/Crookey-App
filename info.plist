@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSCameraUsageDescription</key>
+    <string>Crookey needs camera access to scan food items</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Crookey needs photo library access to save and share recipes</string>
+    <key>NSHealthShareUsageDescription</key>
+    <string>Crookey uses health data to track your nutrition</string>
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>Crookey updates your nutrition data based on recipes</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>api.spoonacular.com</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <false/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+        </dict>
+    </dict>
+</dict>
+</plist>
