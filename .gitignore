@@ -88,3 +88,4 @@ iOSInjectionProject/
 
 # API Keys and Secrets
 Config.xcconfig
+.env
