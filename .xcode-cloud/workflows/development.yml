@@ -1,0 +1,98 @@
+name: Crookey Development
+version: 1.0
+
+trigger:
+  pull_requests:
+    - develop
+    - main
+  branches:
+    - feature/*
+    - hotfix/*
+    - bugfix/*
+
+environments:
+  - name: iOS Simulator
+    runtime: iOS 17.0
+    device: iPhone 15
+  - name: iPad Simulator
+    runtime: iOS 17.0
+    device: iPad Pro (12.9-inch) (6th generation)
+
+workflow:
+  validate:
+    xcode_version: "15.4"
+    scheme: "Crookey"
+    
+    steps:
+      - name: Lint Code
+        run: |
+          if command -v swiftlint >/dev/null 2>&1; then
+            swiftlint --reporter xcode --strict
+          else
+            echo "Installing SwiftLint..."
+            brew install swiftlint
+            swiftlint --reporter xcode --strict
+          fi
+          
+      - name: Check Code Format
+        run: |
+          if command -v swiftformat >/dev/null 2>&1; then
+            swiftformat --lint .
+          else
+            echo "SwiftFormat not found, skipping format check"
+          fi
+
+  build_and_test:
+    depends_on: validate
+    
+    steps:
+      - name: Build Debug
+        run: |
+          xcodebuild build \
+            -scheme Crookey \
+            -destination "platform=iOS Simulator,name=iPhone 15,OS=17.0" \
+            -configuration Debug \
+            -quiet
+            
+      - name: Run Unit Tests
+        run: |
+          xcodebuild test \
+            -scheme Crookey \
+            -destination "platform=iOS Simulator,name=iPhone 15,OS=17.0" \
+            -configuration Debug \
+            -testPlan UnitTests \
+            -enableCodeCoverage YES
+            
+      - name: Run UI Tests on iPhone
+        run: |
+          xcodebuild test \
+            -scheme Crookey \
+            -destination "platform=iOS Simulator,name=iPhone 15,OS=17.0" \
+            -configuration Debug \
+            -testPlan UITests
+            
+      - name: Run UI Tests on iPad
+        run: |
+          xcodebuild test \
+            -scheme Crookey \
+            -destination "platform=iOS Simulator,name=iPad Pro (12.9-inch) (6th generation),OS=17.0" \
+            -configuration Debug \
+            -testPlan UITests
+
+  accessibility_test:
+    depends_on: build_and_test
+    
+    steps:
+      - name: Accessibility Audit
+        run: |
+          xcodebuild test \
+            -scheme Crookey \
+            -destination "platform=iOS Simulator,name=iPhone 15,OS=17.0" \
+            -configuration Debug \
+            -testPlan AccessibilityTests
+
+artifacts:
+  - type: build-logs
+  - type: test-results
+  - type: coverage-report
+  - type: accessibility-report

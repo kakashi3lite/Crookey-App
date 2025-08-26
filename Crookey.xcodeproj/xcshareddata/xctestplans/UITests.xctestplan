@@ -1,0 +1,46 @@
+{
+  "configurations" : [
+    {
+      "id" : "AB8B8C6C-5678-9012-3456-789ABCDEF123",
+      "name" : "iPhone Configuration",
+      "options" : {
+        "testExecutionOrdering" : "random",
+        "targetForVariableExpansion" : {
+          "containerPath" : "container:Crookey.xcodeproj",
+          "identifier" : "CROOKEY_APP_TARGET_ID",
+          "name" : "Crookey"
+        }
+      }
+    },
+    {
+      "id" : "CD8B8C6C-9012-3456-789A-BCDEF1234567",
+      "name" : "iPad Configuration",
+      "options" : {
+        "testExecutionOrdering" : "random",
+        "targetForVariableExpansion" : {
+          "containerPath" : "container:Crookey.xcodeproj",
+          "identifier" : "CROOKEY_APP_TARGET_ID",
+          "name" : "Crookey"
+        }
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testExecutionOrdering" : "random",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Crookey.xcodeproj",
+      "identifier" : "CROOKEY_APP_TARGET_ID",
+      "name" : "Crookey"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Crookey.xcodeproj",
+        "identifier" : "CROOKEY_UI_TESTS_TARGET_ID",
+        "name" : "CrookeyUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

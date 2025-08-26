@@ -1,0 +1,58 @@
+# SwiftFormat Configuration for Crookey
+
+# Formatting rules
+--rules all
+
+# Rules to disable
+--disable andOperator
+--disable wrapMultilineStatementBraces
+--disable blankLinesAroundMark
+
+# Indentation
+--indent 4
+--indentcase false
+--trimwhitespace always
+--commas always
+--decimalgrouping 3,4
+--binarygrouping 4,8
+--octalgrouping 4,8
+--hexgrouping 4,8
+--fractiongrouping disabled
+--exponentgrouping disabled
+
+# Wrapping
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--wrapconditions before-first
+--wrapreturntype if-multiline
+--closingparen balanced
+--wrapternary default
+
+# Spacing
+--operatorfunc spaced
+--nospaceoperators ..<,...
+--ranges spaced
+
+# Options
+--swiftversion 5.9
+--exclude Pods,.build,build,DerivedData,.swiftpm
+
+# Header
+--header "//\n//  {file}\n//  Crookey\n//\n//  Created by {author} on {created}.\n//"
+
+# Import organization
+--importgrouping testable-bottom
+--sortimports alpha
+
+# Self usage
+--self remove
+--selfrequired
+
+# Semicolons
+--semicolons never
+
+# Other formatting options
+--stripunusedargs closure-only
+--redundanttype infer-locals-only
+--typeblanklines remove

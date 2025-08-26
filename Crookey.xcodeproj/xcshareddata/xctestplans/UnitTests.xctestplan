@@ -1,0 +1,42 @@
+{
+  "configurations" : [
+    {
+      "id" : "FF8B8C6C-1234-5678-9ABC-DEF123456789",
+      "name" : "Configuration 1",
+      "options" : {
+        "codeCoverage" : {
+          "targets" : [
+            {
+              "containerPath" : "container:Crookey.xcodeproj",
+              "identifier" : "CROOKEY_APP_TARGET_ID",
+              "name" : "Crookey"
+            }
+          ]
+        },
+        "testExecutionOrdering" : "random"
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:Crookey.xcodeproj",
+          "identifier" : "CROOKEY_APP_TARGET_ID",
+          "name" : "Crookey"
+        }
+      ]
+    },
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Crookey.xcodeproj",
+        "identifier" : "CROOKEY_TESTS_TARGET_ID",
+        "name" : "CrookeyTests"
+      }
+    }
+  ],
+  "version" : 1
+}

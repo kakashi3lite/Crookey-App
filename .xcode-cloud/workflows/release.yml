@@ -1,0 +1,83 @@
+name: Crookey Release
+version: 1.0
+
+trigger:
+  tags:
+    - v*
+  branches:
+    - release/*
+    - main (manual)
+
+environments:
+  - name: iOS Device
+    runtime: iOS 17.0
+
+workflow:
+  build:
+    xcode_version: "15.4"
+    scheme: "Crookey"
+    destination: "generic/platform=iOS"
+    configuration: "Release"
+    
+    steps:
+      - name: Install Dependencies
+        run: |
+          echo "Installing release dependencies..."
+          
+      - name: Update Build Number
+        run: |
+          # Auto-increment build number based on CI build number
+          if [ -n "$CI_BUILD_NUMBER" ]; then
+            agvtool new-version -all $CI_BUILD_NUMBER
+          fi
+          
+      - name: Build Archive
+        run: |
+          xcodebuild archive \
+            -scheme Crookey \
+            -destination "generic/platform=iOS" \
+            -configuration Release \
+            -archivePath "build/Crookey.xcarchive" \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM_ID"
+            
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath "build/Crookey.xcarchive" \
+            -exportPath "build/" \
+            -exportOptionsPlist "ExportOptions.plist"
+
+  test:
+    depends_on: build
+    
+    steps:
+      - name: UI Tests on Device
+        run: |
+          xcodebuild test \
+            -scheme Crookey \
+            -destination "platform=iOS,name=iPhone" \
+            -configuration Release
+            
+  deploy:
+    depends_on: [build, test]
+    
+    steps:
+      - name: Upload to TestFlight
+        run: |
+          xcrun altool --upload-app \
+            --type ios \
+            --file "build/Crookey.ipa" \
+            --username "$APPLE_ID_USERNAME" \
+            --password "$APPLE_ID_PASSWORD"
+            
+      - name: Submit for Review (Manual)
+        run: |
+          echo "App uploaded to TestFlight. Manual review submission required."
+
+artifacts:
+  - type: archive
+    path: "build/Crookey.xcarchive"
+  - type: ipa
+    path: "build/Crookey.ipa"
+  - type: test-results
