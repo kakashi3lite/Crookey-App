@@ -18,7 +18,9 @@ class PersistenceManager {
         let container = NSPersistentContainer(name: "Crookey")
         container.loadPersistentStores { description, error in
             if let error = error {
-                fatalError("Unable to load persistent stores: \(error)")
+                Logger.shared.logError("Core Data store load failed", error: error)
+                // Attempt to recover by removing the store and creating a new one
+                self.handleCoreDataRecovery(container: container, error: error)
             }
         }
         container.viewContext.automaticallyMergesChangesFromParent = true
@@ -30,13 +32,51 @@ class PersistenceManager {
     }
     
     func saveContext() {
-        if context.hasChanges {
+        guard context.hasChanges else { return }
+        
+        do {
+            try context.save()
+            Logger.shared.logInfo("Core Data context saved successfully")
+        } catch {
+            Logger.shared.logError("Core Data save failed", error: error)
+            // Attempt recovery
+            handleSaveError(error)
+        }
+    }
+    
+    private func handleCoreDataRecovery(container: NSPersistentContainer, error: Error) {
+        let coordinator = container.persistentStoreCoordinator
+        
+        // Attempt to remove corrupted store
+        if let storeURL = coordinator.persistentStores.first?.url {
             do {
-                try context.save()
+                try coordinator.destroyPersistentStore(at: storeURL, type: .sqlite, options: nil)
+                try FileManager.default.removeItem(at: storeURL)
+                Logger.shared.logInfo("Corrupted store removed, attempting to recreate")
+                
+                // Try to recreate the store
+                container.loadPersistentStores { _, error in
+                    if let error = error {
+                        Logger.shared.logError("Failed to recreate Core Data store", error: error)
+                    }
+                }
             } catch {
-                print("Error saving context: \(error)")
+                Logger.shared.logError("Failed to recover Core Data store", error: error)
             }
         }
+    }
+    
+    private func handleSaveError(_ error: Error) {
+        // Rollback changes and attempt merge
+        context.rollback()
+        Logger.shared.logWarning("Context rolled back due to save error")
+        
+        // Notify observers of the error
+        NotificationCenter.default.post(
+            name: .coreDataSaveFailed,
+            object: nil,
+            userInfo: ["error": error]
+        )
     }
     
     // MARK: - Recipe Operations
